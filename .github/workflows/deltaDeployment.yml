@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
         uses: actions/checkout@v2
 
       - name: Determine Feature Branch
@@ -42,5 +41,3 @@ jobs:
         env:
           TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
 
-      - name: Notify on Deployment Status
-        # Add a notification step here to report the deployment status.
