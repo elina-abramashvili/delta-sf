@@ -25,7 +25,7 @@ jobs:
         if: github.event_name == 'pull_request'
 
       - name: Create and Deploy Delta Package (Check-Only)
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main') || (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'uat')
+        if:  (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
         run: |
           # Get the feature branch from the previous step's output
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
