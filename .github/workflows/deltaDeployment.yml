@@ -3,8 +3,7 @@ name: Salesforce Check-Only Deployment
 on:
   pull_request:
     branches:
-      - 'feature/test-delta-1'
-
+      - '*'
 
 jobs:
   deploy:
@@ -30,6 +29,7 @@ jobs:
 
           # Create delta folder
           mkdir delta
+          # Working directory should be on the next line
           working-directory: ${{ github.workspace }}
 
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
