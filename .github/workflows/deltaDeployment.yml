@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
         uses: actions/checkout@v2
 
       - name: Determine Feature Branch
@@ -34,10 +35,9 @@ jobs:
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
           sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output delta
 
-          # Perform a check-only (validation-only) 
+          # Perform a check-only (validation-only) deployment to int_release or uat
           sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
           sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
         working-directory: ${{ github.workspace }}
         env:
           TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
-
