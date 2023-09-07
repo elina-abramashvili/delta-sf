@@ -10,6 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+     - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          GITHUB_TOKEN=${{ secrets.WORKFLOW_FORCE_PUSH }}
+          REPO_OWNER=$GITHUB_REPOSITORY_OWNER
+          REPO_NAME=$GITHUB_REPOSITORY
+
+          git config user.name "elina-abramashvili"
+          git config user.email "elina.abramashvili@thinkbeyond.cloud"
+          git clone https://$REPO_OWNER:$GITHUB_TOKEN@github.com/$REPO_NAME.git testFolder
+          cd testFolder
+          git checkout main
       - name: Checkout Code
         uses: actions/checkout@v2
 
