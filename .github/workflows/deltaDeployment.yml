@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Determine Feature Branch
         id: feature_branch
@@ -22,7 +22,16 @@ jobs:
         if: github.event_name == 'pull_request'
 
       - name: Create and Deploy Delta Package (Check-Only)
-        if:   (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
+        if:  
+          (
+            github.event_name == 'pull_request' && 
+            steps.feature_branch.outputs.branch == 'main' &&
+            github.event.action == 'synchronize' # This condition checks for new pushes to the open pull request
+          ) || 
+          (
+            github.event_name == 'push' && 
+            github.ref == 'refs/heads/main'
+          )
         run: |
           # Get the feature branch from the previous step's output
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
