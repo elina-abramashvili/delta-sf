@@ -3,7 +3,7 @@ name: Salesforce Check-Only Deployment
 on:
   pull_request:
     branches:
-      - '*'
+      - 'feature/test-delta-1'
 
 
 jobs:
