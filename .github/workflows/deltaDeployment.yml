@@ -32,9 +32,9 @@ jobs:
         # Authenticate with Salesforce CLI
         sfdx force:auth:web:login -u $SF_USERNAME -p $SF_PASSWORD -r https://test.salesforce.com -s $SF_SECURITY_TOKEN
       env:
-        SF_USERNAME: ${{ secrets.UAT_USERNAME }}
-        SF_PASSWORD: ${{ secrets.UAT_PASSWORD}}
-        SF_SECURITY_TOKEN: ${{ secrets.TARGET_ORG_UAT }}
+        UAT_USERNAME: ${{ secrets.UAT_USERNAME }}
+        UAT_PASSWORD: ${{ secrets.UAT_PASSWORD}}
+        TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
         - name: Determine Feature Branch
           id: feature_branch
           run: |
