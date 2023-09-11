@@ -31,11 +31,11 @@ jobs:
           mkdir delta
 
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
-          cd ${{ github.workspace }}/delta  # Change to the delta folder
+          cd delta  # Change to the delta folder
           sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output .  # Output directly to the current folder
 
           # Perform a check-only (validation-only) deployment to int_release or uat
-          cd ${{ github.workspace }}  # Change back to the workspace folder
+          cd ..  # Change back to the workspace folder
           sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
           sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
         env:
