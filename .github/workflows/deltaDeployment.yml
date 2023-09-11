@@ -15,8 +15,8 @@ jobs:
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
-       with:
-        node-version: 18
+      with:
+        node-version: 18  # Adjust to your desired Node.js version
 
     - name: Install Salesforce CLI and Custom Plugin
       run: |
@@ -24,30 +24,30 @@ jobs:
         sfdx plugins:install sgd-source-delta-plugin
         # Authenticate to Salesforce if necessary
 
-      - name: Determine Feature Branch
-        id: feature_branch
-        run: |
-          # Get the base branch of the pull request (e.g., int_release or uat)
-          FEATURE_BRANCH=$(echo ${{ github.event.pull_request.base.ref }})
-          echo "::set-output name=branch::$FEATURE_BRANCH"
-        if: github.event_name == 'pull_request'
+    - name: Determine Feature Branch
+      id: feature_branch
+      run: |
+        # Get the base branch of the pull request (e.g., int_release or uat)
+        FEATURE_BRANCH=$(echo ${{ github.event.pull_request.base.ref }})
+        echo "::set-output name=branch::$FEATURE_BRANCH"
+      if: github.event_name == 'pull_request'
 
-      - name: Create and Deploy Delta Package (Check-Only)
-        if: (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
-        run: |
-          # Get the feature branch from the previous step's output
-          FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
+    - name: Create and Deploy Delta Package (Check-Only)
+      if: (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
+      run: |
+        # Get the feature branch from the previous step's output
+        FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
 
-          # Create delta folder
-           mkdir delta
+        # Create delta folder
+        mkdir delta
 
-          # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
-          cd delta  # Change to the delta folder
-          sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output .  # Output directly to the current folder
+        # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
+        cd delta  # Change to the delta folder
+        sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output .  # Output directly to the current folder
 
-          # Perform a check-only (validation-only) deployment to int_release or uat
-          cd ..  # Change back to the workspace folder
-          sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
-          sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
-        env:
-          TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
+        # Perform a check-only (validation-only) deployment to int_release or uat
+        cd ..  # Change back to the workspace folder
+        sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
+        sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
+      env:
+        TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
