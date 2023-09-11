@@ -28,7 +28,7 @@ jobs:
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
 
           # Create delta folder
-          mkdir delta
+          sudo mkdir delta
 
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
           cd delta  # Change to the delta folder
