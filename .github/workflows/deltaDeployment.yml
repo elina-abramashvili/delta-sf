@@ -22,16 +22,7 @@ jobs:
         if: github.event_name == 'pull_request'
 
       - name: Create and Deploy Delta Package (Check-Only)
-        if:  
-          (
-            github.event_name == 'pull_request' && 
-            steps.feature_branch.outputs.branch == 'main' &&
-            github.event.action == 'synchronize' # This condition checks for new pushes to the open pull request
-          ) || 
-          (
-            github.event_name == 'push' && 
-            github.ref == 'refs/heads/main'
-          )
+        if:   (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
         run: |
           # Get the feature branch from the previous step's output
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
@@ -47,5 +38,6 @@ jobs:
           # Perform a check-only (validation-only) deployment to int_release or uat
           sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
           sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
+        working-directory: ${{ github.workspace }}
         env:
           TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
