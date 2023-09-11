@@ -21,7 +21,7 @@ jobs:
     - name: Install Salesforce CLI and Custom Plugin
       run: |
         npm install @salesforce/cli --global
-        sfdx plugins:install sgd-source-delta-plugin
+        sfdx plugins:install sfdx-git-delta
         # Authenticate to Salesforce if necessary
 
     - name: Determine Feature Branch
