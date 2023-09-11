@@ -22,22 +22,21 @@ jobs:
         if: github.event_name == 'pull_request'
 
       - name: Create and Deploy Delta Package (Check-Only)
-        if:   (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
+        if: (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
         run: |
           # Get the feature branch from the previous step's output
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
 
           # Create delta folder
           mkdir delta
-          # Working directory should be on the next line
-          working-directory: ${{ github.workspace }}
 
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
-          sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output delta
+          cd ${{ github.workspace }}/delta  # Change to the delta folder
+          sfdx sgd:source:delta --to "feature/$FEATURE_BRANCH" --from main --output .  # Output directly to the current folder
 
           # Perform a check-only (validation-only) deployment to int_release or uat
+          cd ${{ github.workspace }}  # Change back to the workspace folder
           sfdx force:source:deploy -x package.xml -u $TARGET_ORG_UAT --checkonly # Add '--checkonly' flag
           sfdx force:source:deploy -x delta/package/package.xml -u $TARGET_ORG_UAT --checkonly --postdestructivechanges delta/destructiveChanges/destructiveChanges.xml -l RunLocalTests
-        working-directory: ${{ github.workspace }}
         env:
           TARGET_ORG_UAT: ${{ secrets.TARGET_ORG_UAT }}
