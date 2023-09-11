@@ -6,10 +6,19 @@ on:
       - '*'
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+build:
+    docker:
+      - image: node:14 # Use a Node.js base image
     steps:
+      - checkout # Check out your project's source code
+      - run:
+          name: Install Salesforce CLI
+          command: |
+            # Install Salesforce CLI
+            npm install -g sfdx-cli
+            # Install the custom plugin
+            sfdx plugins:install sgd-source-delta-plugin
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -28,7 +37,7 @@ jobs:
           FEATURE_BRANCH="${{ steps.feature_branch.outputs.branch }}"
 
           # Create delta folder
-          sudo mkdir delta
+           mkdir delta
 
           # Generate your delta package using the sfdx sgd:source:delta command for the feature branch
           cd delta  # Change to the delta folder
