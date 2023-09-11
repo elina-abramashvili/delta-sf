@@ -20,7 +20,7 @@ jobs:
 
     - name: Install Salesforce CLI and Custom Plugin
       run: |
-        npm install -g sfdx-cli
+        npm install @salesforce/cli --global
         sfdx plugins:install sgd-source-delta-plugin
         # Authenticate to Salesforce if necessary
 
