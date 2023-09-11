@@ -30,7 +30,7 @@ jobs:
         SF_SECURITY_TOKEN=${{ secrets.TARGET_ORG_UAT }}
         
         # Authenticate with Salesforce CLI
-        sfdx force:auth:web:login -u $UAT_USERNAME -p $UAT_PASSWORD -r https://test.salesforce.com -s $TARGET_ORG_UAT
+        sfdx force:auth:web:login -u $SF_USERNAME -p $SF_PASSWORD -r https://test.salesforce.com -s $SF_SECURITY_TOKEN
       env:
         SF_USERNAME: ${{ secrets.UAT_USERNAME }}
         SF_PASSWORD: ${{ secrets.UAT_PASSWORD}}
