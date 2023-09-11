@@ -22,15 +22,26 @@ jobs:
       run: |
         npm install @salesforce/cli --global
         sfdx plugins:install sfdx-git-delta
-        # Authenticate to Salesforce if necessary
-
-    - name: Determine Feature Branch
-      id: feature_branch
+    - name: Authenticate with Salesforce CLI
       run: |
-        # Get the base branch of the pull request (e.g., int_release or uat)
-        FEATURE_BRANCH=$(echo ${{ github.event.pull_request.base.ref }})
-        echo "::set-output name=branch::$FEATURE_BRANCH"
-      if: github.event_name == 'pull_request'
+        # Extract Salesforce CLI authentication information from GitHub secret
+        SF_USERNAME=${{ secrets.UAT_USERNAME }}
+        SF_PASSWORD=${{ secrets.UAT_PASSWORD }}
+        SF_SECURITY_TOKEN=${{ secrets.TARGET_ORG_UAT }}
+        
+        # Authenticate with Salesforce CLI
+        sfdx force:auth:web:login -u $UAT_USERNAME -p $UAT_PASSWORD -r https://test.salesforce.com -s $TARGET_ORG_UAT
+      env:
+        SF_USERNAME: ${{ secrets.UAT_USERNAME }}
+        SF_PASSWORD: ${{ secrets.UAT_PASSWORD}}
+        SF_SECURITY_TOKEN: ${{ secrets.TARGET_ORG_UAT }}
+        - name: Determine Feature Branch
+          id: feature_branch
+          run: |
+            # Get the base branch of the pull request (e.g., int_release or uat)
+            FEATURE_BRANCH=$(echo ${{ github.event.pull_request.base.ref }})
+            echo "::set-output name=branch::$FEATURE_BRANCH"
+          if: github.event_name == 'pull_request'
 
     - name: Create and Deploy Delta Package (Check-Only)
       if: (github.event_name == 'pull_request' && steps.feature_branch.outputs.branch == 'main')
